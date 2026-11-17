@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // OpenCode 2.2.2向け。既存の設定へmcpの項目をマージする。
+  // OPENCODE_MODELは既存の接続先に対応する「provider ID/gpt6.1-sol」。
+  // モデルが既に選ばれている場合、model行は追加しなくてよい。
+  "model": "{env:OPENCODE_MODEL}",
+  "mcp": {
+    "servers": {
+      "personal-poc": {
+        "type": "remote",
+        "url": "http://127.0.0.1:8000/mcp",
+        "oauth": false,
+        "protocol": "legacy",
+        "codemode": false,
+        "timeout": {
+          "startup": 30000,
+          "catalog": 30000,
+          "execution": 180000
+        }
+      }
+    }
+  }
+}

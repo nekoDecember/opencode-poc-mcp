@@ -1,0 +1,55 @@
+name: opencode-poc-mcp
+services:
+  mcp:
+    build:
+      context: .
+      args:
+        http_proxy: ${http_proxy:-${HTTP_PROXY:-}}
+        https_proxy: ${https_proxy:-${HTTPS_PROXY:-}}
+        no_proxy: ${no_proxy:-${NO_PROXY:-localhost,127.0.0.1}}
+        HTTP_PROXY: ${http_proxy:-${HTTP_PROXY:-}}
+        HTTPS_PROXY: ${https_proxy:-${HTTPS_PROXY:-}}
+        NO_PROXY: ${no_proxy:-${NO_PROXY:-localhost,127.0.0.1}}
+    restart: unless-stopped
+    init: true
+    shm_size: 1gb
+    ports:
+      - "127.0.0.1:${MCP_PORT:-8000}:8000"
+    env_file: .env
+    environment:
+      MCP_CONFIG: /config/config.toml
+      http_proxy: ${http_proxy:-${HTTP_PROXY:-}}
+      https_proxy: ${https_proxy:-${HTTPS_PROXY:-}}
+      no_proxy: ${no_proxy:-${NO_PROXY:-localhost,127.0.0.1}}
+      HTTP_PROXY: ${http_proxy:-${HTTP_PROXY:-}}
+      HTTPS_PROXY: ${https_proxy:-${HTTPS_PROXY:-}}
+      NO_PROXY: ${no_proxy:-${NO_PROXY:-localhost,127.0.0.1}}
+    volumes:
+      - type: bind
+        source: ./config/config.toml
+        target: /config/config.toml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${SCREENSHOT_HOST_DIR:?Snipping Toolの保存先をWSLの絶対パスで指定してください}
+        target: /screenshots
+        read_only: true
+        bind:
+          create_host_path: false
+      - mcp_data:/data
+    networks:
+      - bridge_common
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+volumes:
+  mcp_data:
+networks:
+  bridge_common:
+    external: true
+    name: bridge_common

@@ -1,0 +1,58 @@
+# 変更後は docker compose restart mcp で読み直す。全パスはコンテナ内のパス。
+[server]
+host = "0.0.0.0"
+port = 8000
+
+[paths]
+screenshots = "/screenshots"
+artifacts = "/data/artifacts"
+repos = "/data/repos"
+
+[git]
+author_name = "OpenCode PoC"
+author_email = "opencode@example.invalid"
+timeout_seconds = 120
+
+# repo引数にはこのIDを渡す。cloneはrepo_sync時に行う。
+[repositories.knowledge]
+url = "https://gitea.example.internal/YOUR_NAME/knowledge.git"
+branch = "main"
+username_env = "GITEA_USERNAME"
+password_env = "GITEA_PASSWORD"
+writable = true
+
+[repositories.daily]
+url = "https://gitea.example.internal/YOUR_NAME/daily.git"
+branch = "main"
+username_env = "GITEA_USERNAME"
+password_env = "GITEA_PASSWORD"
+writable = false
+daily_file = "daily.md"
+
+[browser]
+viewport_width = 1440
+viewport_height = 1000
+timeout_ms = 30000
+storage_state = "/data/browser/auth.json"
+font = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
+# browser_fill_secretに許可する環境変数名。不要なら空にする。
+secret_envs = ["INTRANET_USERNAME", "INTRANET_PASSWORD"]
+
+[search]
+enabled = true
+endpoint = "https://api.tavily.com/search"
+api_key_env = "TAVILY_API_KEY"
+max_terms = 6
+max_results = 5
+
+# 人だけが編集する公開語の一覧。自由文や社内名、ログを登録しない。
+# MCPには、このファイルを変更するツールを設けない。
+[search.terms]
+python = "Python"
+playwright = "Playwright"
+chromium = "Chromium"
+timeout_error = "TimeoutError"
+docker = "Docker"
+compose = "Docker Compose"
+gitea = "Gitea"
+mcp = "Model Context Protocol"
